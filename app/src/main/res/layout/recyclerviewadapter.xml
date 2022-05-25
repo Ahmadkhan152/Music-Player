@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/recyclerviewconstraintlayout"
+    android:clickable="true"
+    android:padding="@dimen/_15sdp"
+    android:background="#453C3C"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:id="@+id/ivSong"
+        android:src="@drawable/songicon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"></ImageView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:textColor="#FFFFFF"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSongName"
+        app:layout_constraintLeft_toRightOf="@+id/ivSong"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Ahmad Khan"
+        android:layout_marginLeft="@dimen/_10sdp"></TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSongTime"
+        android:text="00"
+        android:textColor="#FFFFFF"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="@dimen/_10sdp"
+        app:layout_constraintTop_toTopOf="parent"></TextView>
+</androidx.constraintlayout.widget.ConstraintLayout>

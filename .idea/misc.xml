@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable-mdpi/songicon.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable-night/songicon.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable-television/songicon.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable/appicon.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable/menusort.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/drawable/songicon.xml" value="0.105" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/activity_all_tracks.xml" value="0.1" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/activity_home.xml" value="0.18" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/activity_main.xml" value="0.225" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/activity_song.xml" value="0.22" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/activity_song2.xml" value="0.1" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/fragment_albums.xml" value="0.225" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/fragment_artists.xml" value="0.225" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/fragment_folders.xml" value="0.225" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/fragment_playlists.xml" value="0.33" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/fragment_tracks.xml" value="0.225" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/mainartistlayoutrecycler.xml" value="0.75" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/recyclerviewadapter.xml" value="0.33" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/recyclerviewalbums.xml" value="0.33" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/layout/recyclerviewfolderlayout.xml" value="0.5" />
+        <entry key="..\:/Users/DELL/AndroidStudioProjects/MusicPlayer/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.105" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

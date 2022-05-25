@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/_10sdp"
+    android:clickable="true"
+    android:background="#453C3C"
+    android:layout_height="wrap_content"
+    android:id="@+id/contraintlayout">
+
+    <ImageView
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:id="@+id/ivSong"
+        android:layout_margin="@dimen/_5sdp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/songicon"></ImageView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAlbumName"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintLeft_toRightOf="@+id/ivSong"
+        app:layout_constraintTop_toTopOf="@+id/ivSong"
+        android:textColor="@color/white"
+        android:text="Hey There!"
+        android:layout_marginLeft="@dimen/_10sdp"
+        ></TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvAlbumCount"
+        android:text="1 Album"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/tvAlbumName"
+        app:layout_constraintBottom_toBottomOf="@+id/ivSong"
+        app:layout_constraintLeft_toRightOf="@+id/ivSong"
+        android:layout_marginLeft="@dimen/_10sdp"></TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTrackCount"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintLeft_toRightOf="@+id/tvAlbumCount"
+        android:textColor="@color/white"
+        android:text="1 Track"
+        app:layout_constraintBottom_toBottomOf="@+id/tvAlbumCount"
+        android:layout_marginLeft="@dimen/_10sdp"></TextView>
+</androidx.constraintlayout.widget.ConstraintLayout>

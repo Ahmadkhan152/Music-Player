@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#453C3C"
+    tools:context=".Fragments.PlaylistsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:id="@+id/constraintlayout">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvAllTracks"
+            android:text="All tracks"
+            android:textSize="@dimen/_13sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:textColor="#FFFFFF"></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvNoOfSongs"
+            android:text="30 Tracks"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="#FFFFFF"
+            app:layout_constraintTop_toBottomOf="@+id/tvAllTracks"
+            app:layout_constraintLeft_toLeftOf="@+id/tvAllTracks"></TextView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
