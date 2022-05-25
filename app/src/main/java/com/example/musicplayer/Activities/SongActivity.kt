@@ -88,6 +88,38 @@ class SongActivity : AppCompatActivity() {
 
         }
         ivSkipPrevious.setOnClickListener {
+            mediaPlayer.pause()
+            mediaPlayer.release()
+            if (position!=0)
+            {
+                position--
+                if ((position-1) != songModel.size)
+                    tvNextSong.text=songModel[position+1].audioList
+                else
+                    tvNextSong.text=songModel[0].audioList
+                mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
+                val time=simpleDateFormat.format(songModel[position].timeList.toInt())
+                tvEndPoint.text=time
+                tvSongName.text=songModel[position].audioList
+                tvAlbumName.text=songModel[position].artistName
+                seekbar.progress=0
+                seekbar.max=mediaPlayer.duration
+                mediaPlayer.start()
+            }
+            else
+            {
+                position=songModel.size
+                tvNextSong.text=songModel[0].audioList
+                mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
+                val time=simpleDateFormat.format(songModel[position].timeList.toInt())
+                tvEndPoint.text=time
+                tvSongName.text=songModel[position].audioList
+                tvAlbumName.text=songModel[position].artistName
+                seekbar.progress=0
+                seekbar.max=mediaPlayer.duration
+                mediaPlayer.start()
+
+            }
 
         }
         ivSkipNext.setOnClickListener {
