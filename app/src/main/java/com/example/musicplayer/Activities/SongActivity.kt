@@ -35,6 +35,7 @@ class SongActivity : AppCompatActivity() {
     lateinit var songModel: ArrayList<SongModel>
     lateinit var runnable: Runnable
     lateinit var tvNextSong:TextView
+    var checkForShuffle=false
     var currentSong:String = ""
     var nextSong:String=""
     var position=0
@@ -86,6 +87,16 @@ class SongActivity : AppCompatActivity() {
         }
         ivShuffle.setOnClickListener {
 
+            if (!checkForShuffle)
+            {
+                checkForShuffle=true
+                ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_24_click)
+            }
+            else
+            {
+                checkForShuffle=false
+                ivShuffle.setImageResource(R.drawable.ic_baseline_shuffle_24)
+            }
         }
         ivSkipPrevious.setOnClickListener {
             mediaPlayer.pause()
@@ -94,9 +105,9 @@ class SongActivity : AppCompatActivity() {
             {
                 position--
                 if ((position-1) != songModel.size)
-                    tvNextSong.text=songModel[position+1].audioList
+                    tvNextSong.text="Next: ${songModel[position+1].audioList}"
                 else
-                    tvNextSong.text=songModel[0].audioList
+                    tvNextSong.text="Next: ${songModel[0].audioList}"
                 mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 val time=simpleDateFormat.format(songModel[position].timeList.toInt())
                 tvEndPoint.text=time
@@ -109,7 +120,7 @@ class SongActivity : AppCompatActivity() {
             else
             {
                 position=songModel.size
-                tvNextSong.text=songModel[0].audioList
+                tvNextSong.text="Next: ${songModel[0].audioList}"
                 mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 val time=simpleDateFormat.format(songModel[position].timeList.toInt())
                 tvEndPoint.text=time
@@ -129,9 +140,9 @@ class SongActivity : AppCompatActivity() {
             {
                 position++
                 if ((position+1) != songModel.size)
-                    tvNextSong.text=songModel[position+1].audioList
+                    tvNextSong.text="Next: ${songModel[position+1].audioList}"
                 else
-                    tvNextSong.text=songModel[0].audioList
+                    tvNextSong.text="Next: ${songModel[0].audioList}"
                 mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 val time=simpleDateFormat.format(songModel[position].timeList.toInt())
                 tvEndPoint.text=time
@@ -144,7 +155,7 @@ class SongActivity : AppCompatActivity() {
             else
             {
                 position=0
-                tvNextSong.text=songModel[position].audioList
+                tvNextSong.text="Next: ${songModel[position].audioList}"
                 mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 val time=simpleDateFormat.format(songModel[position].timeList.toInt())
                 tvEndPoint.text=time
@@ -169,7 +180,16 @@ class SongActivity : AppCompatActivity() {
             }
         }
         ivRepeat.setOnClickListener {
-
+            if (!checkForShuffle)
+            {
+                checkForShuffle=true
+                ivRepeat.setImageResource(R.drawable.ic_baseline_repeat_24_click)
+            }
+            else
+            {
+                checkForShuffle=false
+                ivRepeat.setImageResource(R.drawable.ic_baseline_repeat_24)
+            }
         }
         seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
@@ -189,16 +209,55 @@ class SongActivity : AppCompatActivity() {
         })
         worker.schedule(runnable,1000, TimeUnit.MILLISECONDS)
         mediaPlayer.setOnCompletionListener {
-            mediaPlayer.pause()
-            ivPlay.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+            if (!checkForShuffle){
+                mediaPlayer.pause()
+                mediaPlayer.release()
+                ivPlay.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+            }
+            else
+            {
+                mediaPlayer.pause()
+                mediaPlayer.release()
+                if (position!=songModel.size)
+                {
+                    position++
+                    if ((position+1) != songModel.size)
+                        tvNextSong.text="Next: ${songModel[position+1].audioList}"
+                    else
+                        tvNextSong.text="Next: ${songModel[0].audioList}"
+                    mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
+                    val time=simpleDateFormat.format(songModel[position].timeList.toInt())
+                    tvEndPoint.text=time
+                    tvSongName.text=songModel[position].audioList
+                    tvAlbumName.text=songModel[position].artistName
+                    seekbar.progress=0
+                    seekbar.max=mediaPlayer.duration
+                    mediaPlayer.start()
+                }
+                else
+                {
+                    position=0
+                    tvNextSong.text="Next: ${songModel[position].audioList}"
+                    mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
+                    val time=simpleDateFormat.format(songModel[position].timeList.toInt())
+                    tvEndPoint.text=time
+                    tvSongName.text=songModel[position].audioList
+                    tvAlbumName.text=songModel[position].artistName
+                    seekbar.progress=0
+                    seekbar.max=mediaPlayer.duration
+                    mediaPlayer.start()
+
+                }
+            }
+
         }
     }
 
     override fun onPause() {
         super.onPause()
 
-        //mediaPlayer.pause()
-        //mediaPlayer.release()
+        mediaPlayer.pause()
+        mediaPlayer.release()
 
     }
 }
