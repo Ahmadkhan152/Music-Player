@@ -1,26 +1,29 @@
 package com.example.musicplayer.Activities
 
+import android.app.Activity
+import android.app.ActivityManager
+import android.content.*
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
+import android.os.IBinder
 import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.core.net.toUri
 import com.example.musicplayer.Constants.*
 import com.example.musicplayer.Models.SongModel
 import com.example.musicplayer.R
-import java.lang.Runnable
-import java.lang.reflect.Array
+import com.example.musicplayer.Services.MyServices
+import com.example.musicplayer.Services.MyServices.LocalBinder
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
-class SongActivity : AppCompatActivity() {
+
+class SongActivity : BaseActivity() {
 
     lateinit var seekbar: SeekBar
     lateinit var tvSongName:TextView
@@ -32,13 +35,16 @@ class SongActivity : AppCompatActivity() {
     lateinit var ivSkipNext:ImageView
     lateinit var ivPlay:ImageView
     lateinit var ivRepeat:ImageView
+    lateinit var receiver: BroadcastReceiver
     lateinit var songModel: ArrayList<SongModel>
     lateinit var runnable: Runnable
     lateinit var tvNextSong:TextView
+    lateinit var serviceObject:MyServices
     var checkForShuffle=false
     var currentSong:String = ""
     var nextSong:String=""
     var position=0
+    var mBounded = false
     lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +74,35 @@ class SongActivity : AppCompatActivity() {
         mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
         val simpleDateFormat = SimpleDateFormat(PATTERN)
         val time=simpleDateFormat.format(songModel[position].timeList.toInt())
+        seekbar.progress=0
+        seekbar.max=mediaPlayer.duration
+
+        class MyBroadCast:BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == MY_BROADCAST)
+                {
+                    val progress=intent?.getIntExtra(PROGRESS_SEEKBAR,-1)
+                    var duration=intent?.getIntExtra(DURATION,-1)
+                    if (progress!=-1 && progress!=null)
+                    {
+                        seekbar.progress=progress
+                        val simpleDateFormat = SimpleDateFormat(PATTERN)
+                        val time=simpleDateFormat.format(progress)
+                        tvStartPoint.text=time.toString()
+                    }
+                }
+            }
+        }
+
+
+        val receiver=MyBroadCast()
+        val intentFilter=IntentFilter()
+        intentFilter.addAction(MY_BROADCAST)
+        registerReceiver(receiver,intentFilter)
+        val mIntent = Intent(this, MyServices::class.java)
+        bindService(mIntent, mConnection, BIND_AUTO_CREATE)
+        startService(intent)
+
         tvEndPoint.text=time
         tvSongName.text=songModel[position].audioList
         tvAlbumName.text=songModel[position].artistName
@@ -75,16 +110,7 @@ class SongActivity : AppCompatActivity() {
             tvNextSong.text="Next: ${songModel[position+1].audioList}"
         else
             tvNextSong.text="Next: ${songModel[0].audioList}"
-        seekbar.progress=0
-        seekbar.max=mediaPlayer.duration
-        mediaPlayer.start()
-        runnable= Runnable {
-            seekbar.progress=mediaPlayer.currentPosition
-            worker.schedule(runnable,1000, TimeUnit.MILLISECONDS)
-            val simpleDateFormat = SimpleDateFormat(PATTERN)
-            val time=simpleDateFormat.format(mediaPlayer.currentPosition.toString().toInt())
-            tvStartPoint.text=time.toString()
-        }
+
         ivShuffle.setOnClickListener {
 
             if (!checkForShuffle)
@@ -99,15 +125,11 @@ class SongActivity : AppCompatActivity() {
             }
         }
         ivSkipPrevious.setOnClickListener {
-            mediaPlayer.pause()
-            mediaPlayer.release()
+            serviceObject.stopMedia()
             if (position!=0)
             {
                 position--
-                if ((position-1) != songModel.size)
                     tvNextSong.text="Next: ${songModel[position+1].audioList}"
-                else
-                    tvNextSong.text="Next: ${songModel[0].audioList}"
                 mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 val time=simpleDateFormat.format(songModel[position].timeList.toInt())
                 tvEndPoint.text=time
@@ -115,7 +137,7 @@ class SongActivity : AppCompatActivity() {
                 tvAlbumName.text=songModel[position].artistName
                 seekbar.progress=0
                 seekbar.max=mediaPlayer.duration
-                mediaPlayer.start()
+                serviceObject.startMusic(songModel[position].dataList)
             }
             else
             {
@@ -128,14 +150,12 @@ class SongActivity : AppCompatActivity() {
                 tvAlbumName.text=songModel[position].artistName
                 seekbar.progress=0
                 seekbar.max=mediaPlayer.duration
-                mediaPlayer.start()
-
+                serviceObject.startMusic(songModel[position].dataList)
             }
 
         }
         ivSkipNext.setOnClickListener {
-            mediaPlayer.pause()
-            mediaPlayer.release()
+            serviceObject.stopMedia()
             if (position!=songModel.size)
             {
                 position++
@@ -143,40 +163,39 @@ class SongActivity : AppCompatActivity() {
                     tvNextSong.text="Next: ${songModel[position+1].audioList}"
                 else
                     tvNextSong.text="Next: ${songModel[0].audioList}"
-                mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 val time=simpleDateFormat.format(songModel[position].timeList.toInt())
                 tvEndPoint.text=time
                 tvSongName.text=songModel[position].audioList
                 tvAlbumName.text=songModel[position].artistName
+                mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
                 seekbar.progress=0
                 seekbar.max=mediaPlayer.duration
-                mediaPlayer.start()
+                serviceObject.startMusic(songModel[position].dataList)
             }
             else
             {
                 position=0
-                tvNextSong.text="Next: ${songModel[position].audioList}"
+                tvNextSong.text="Next: ${songModel[position+1].audioList}"
                 mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
-                val time=simpleDateFormat.format(songModel[position].timeList.toInt())
+                val time=simpleDateFormat.format(songModel[0].timeList.toInt())
                 tvEndPoint.text=time
                 tvSongName.text=songModel[position].audioList
                 tvAlbumName.text=songModel[position].artistName
                 seekbar.progress=0
                 seekbar.max=mediaPlayer.duration
-                mediaPlayer.start()
+                serviceObject.startMusic(songModel[position].dataList)
 
             }
         }
         ivPlay.setOnClickListener {
-
-            if (!mediaPlayer.isPlaying){
-                mediaPlayer.start()
-                ivPlay.setImageResource(R.drawable.ic_baseline_pause_24)
-            }
-            else
+            if (serviceObject.checkSong())
             {
-                mediaPlayer.pause()
+                serviceObject.pauseSong()
                 ivPlay.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+            }
+            else{
+                serviceObject.playSong()
+                ivPlay.setImageResource(R.drawable.ic_baseline_pause_24)
             }
         }
         ivRepeat.setOnClickListener {
@@ -194,70 +213,43 @@ class SongActivity : AppCompatActivity() {
         seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
 
-                if (p2){
-                    mediaPlayer.seekTo(p1)
+                if (p2)
+                {
+                    serviceObject.setPositionSong(p1)
                 }
+
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
-
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
-
+                //seekbar.progress=p0!!.progress
             }
         })
-        worker.schedule(runnable,1000, TimeUnit.MILLISECONDS)
-        mediaPlayer.setOnCompletionListener {
-            if (!checkForShuffle){
-                mediaPlayer.pause()
-                mediaPlayer.release()
-                ivPlay.setImageResource(R.drawable.ic_baseline_play_arrow_24)
-            }
-            else
-            {
-                mediaPlayer.pause()
-                mediaPlayer.release()
-                if (position!=songModel.size)
-                {
-                    position++
-                    if ((position+1) != songModel.size)
-                        tvNextSong.text="Next: ${songModel[position+1].audioList}"
-                    else
-                        tvNextSong.text="Next: ${songModel[0].audioList}"
-                    mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
-                    val time=simpleDateFormat.format(songModel[position].timeList.toInt())
-                    tvEndPoint.text=time
-                    tvSongName.text=songModel[position].audioList
-                    tvAlbumName.text=songModel[position].artistName
-                    seekbar.progress=0
-                    seekbar.max=mediaPlayer.duration
-                    mediaPlayer.start()
-                }
-                else
-                {
-                    position=0
-                    tvNextSong.text="Next: ${songModel[position].audioList}"
-                    mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
-                    val time=simpleDateFormat.format(songModel[position].timeList.toInt())
-                    tvEndPoint.text=time
-                    tvSongName.text=songModel[position].audioList
-                    tvAlbumName.text=songModel[position].artistName
-                    seekbar.progress=0
-                    seekbar.max=mediaPlayer.duration
-                    mediaPlayer.start()
+    }
+    private val mConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName) {
+            mBounded = false
+        }
 
-                }
-            }
-
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            mBounded = true
+            val mLocalBinder = service as LocalBinder
+            serviceObject = mLocalBinder.serverInstance()
+            serviceObject.startMusic(songModel[position].dataList)
         }
     }
-
-    override fun onPause() {
-        super.onPause()
-
-        mediaPlayer.pause()
-        mediaPlayer.release()
+    override fun onStart() {
+        super.onStart()
 
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+    override fun onPause() {
+        super.onPause()
+    }
+
 }

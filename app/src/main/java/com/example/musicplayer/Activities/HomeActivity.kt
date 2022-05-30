@@ -11,7 +11,9 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
@@ -21,7 +23,7 @@ import com.example.musicplayer.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
     var permissions=arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.MODIFY_AUDIO_SETTINGS)
     private val requestCode=567
 
@@ -31,6 +33,8 @@ class HomeActivity : AppCompatActivity() {
 val mediaStore = arrayOf<String>(MediaStore.Audio.Media._ID,MediaStore.Audio.Media.DISPLAY_NAME,MediaStore.Audio.Media.DURATION)
     lateinit var viewpager: ViewPager2
     lateinit var tablayout: TabLayout
+    lateinit var constraintlayout:ConstraintLayout
+    lateinit var tvSongName:TextView
     lateinit var audioList:ArrayList<String>
     lateinit var timeList:ArrayList<String>
 
@@ -47,6 +51,8 @@ val mediaStore = arrayOf<String>(MediaStore.Audio.Media._ID,MediaStore.Audio.Med
         //Initialization of all attributes
         audioList=ArrayList()
         timeList= ArrayList()
+        constraintlayout=findViewById(R.id.contraintlayoutbottom)
+        tvSongName=findViewById(R.id.tvSongName)
         viewpager = findViewById<ViewPager2>(R.id.viewpager)
         tablayout=findViewById<TabLayout>(R.id.tablayout)
     //Finish Initialization of all attributes
@@ -89,7 +95,6 @@ val mediaStore = arrayOf<String>(MediaStore.Audio.Media._ID,MediaStore.Audio.Med
         }
         return true
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

@@ -13,4 +13,10 @@
      android:background="#453C3C"
      ></androidx.recyclerview.widget.RecyclerView>
 
+ <fragment
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+  android:name="com.example.musicplayer.Fragments.FragmentLayout"
+  android:layout_gravity="bottom"
+  android:id="@+id/fragment"></fragment>
 </FrameLayout>

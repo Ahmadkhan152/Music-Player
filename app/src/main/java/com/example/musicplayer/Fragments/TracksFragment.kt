@@ -1,5 +1,7 @@
 package com.example.musicplayer.Fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
@@ -9,10 +11,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.musicplayer.Activities.SongActivity
 import com.example.musicplayer.Adapter.RecyclerviewAdapter
+import com.example.musicplayer.Constants.ARTIST_NAME
+import com.example.musicplayer.Constants.OBJECT
+import com.example.musicplayer.Constants.POSITION
+import com.example.musicplayer.Constants.SONG_NAME
 import com.example.musicplayer.Models.SongModel
 import com.example.musicplayer.R
 
@@ -20,13 +29,27 @@ import com.example.musicplayer.R
 class TracksFragment : Fragment() {
 
 
-    val mediaStore = arrayOf<String>(
+    private val mediaStore = arrayOf<String>(
         MediaStore.Audio.Media._ID,
         MediaStore.Audio.Media.DATA,
         MediaStore.Audio.Media.TITLE,
         MediaStore.Audio.Media.DURATION,
     MediaStore.Audio.Media.ARTIST)
+    private var getContent1 = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult? ->
 
+            if (result?.resultCode == Activity.RESULT_OK) {
+
+//                constraintlayout.visibility= View.VISIBLE
+//                songName= intent.getStringExtra(SONG_NAME).toString()
+//                artistName=intent.getStringExtra(ARTIST_NAME).toString()
+//                tvSongName.text=songName+artistName
+            }
+            else
+            {
+//                songName=""
+//                artistName=""
+            }
+        }
     lateinit var audioCursor: Cursor
     lateinit var timeList:ArrayList<String>
     lateinit var audioList:ArrayList<String>
@@ -34,6 +57,15 @@ class TracksFragment : Fragment() {
     lateinit var songModel: ArrayList<SongModel>
     lateinit var recyclerview:RecyclerView
     lateinit var adapter:RecyclerviewAdapter
+    lateinit var tvSongName:TextView
+    lateinit var constraintlayout:ConstraintLayout
+    private val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult? ->
+
+        if (result?.resultCode == Activity.RESULT_OK)
+        {
+
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +100,12 @@ class TracksFragment : Fragment() {
             }
         }
         audioCursor.close()
-        adapter= RecyclerviewAdapter(requireContext(),songModel)
+        adapter= RecyclerviewAdapter(requireContext(),songModel) { position ->
+            val intent: Intent = Intent(context, SongActivity::class.java)
+            intent.putExtra(OBJECT,songModel)
+            intent.putExtra(POSITION,position)
+            getContent1.launch(intent)
+        }
         recyclerview.adapter=adapter
         return view
     }

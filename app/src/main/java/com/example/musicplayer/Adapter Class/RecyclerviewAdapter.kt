@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.musicplayer.Activities.SongActivity
@@ -17,7 +19,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class RecyclerviewAdapter(val context: Context,val obj:ArrayList<SongModel>):RecyclerView.Adapter<RecyclerviewAdapter.viewHolder>() {
+class RecyclerviewAdapter(
+    val context: Context,
+    private val obj:ArrayList<SongModel>,
+    var callFunction : (Int) -> Unit
+):RecyclerView.Adapter<RecyclerviewAdapter.viewHolder>() {
     class viewHolder(itemView:View):RecyclerView.ViewHolder(itemView)
     {
         val tvSongName=itemView.findViewById<TextView>(R.id.tvSongName)
@@ -39,13 +45,12 @@ class RecyclerviewAdapter(val context: Context,val obj:ArrayList<SongModel>):Rec
             holder.tvSongTime.text = "${time}"
         }
         holder.constraintlayout.setOnClickListener {
-            val intent:Intent=Intent(context,SongActivity::class.java)
-//            intent.putExtra(CURRENT_SONG,obj[position]?.dataList)
-//            intent.putExtra(DURATION,obj[position]?.timeList)
-//            if (position!=obj.size)
-//                intent.putExtra(NEXT_SONG,obj[position+1].dataList)
+            val intent=Intent(context, SongActivity::class.java)
             intent.putExtra(OBJECT,obj)
             intent.putExtra(POSITION,position)
+            if (position!=obj.size)
+                intent.putExtra(NEXT_SONG,obj[position+1].dataList)
+            //callFunction.invoke(position)
             context.startActivity(intent)
         }
     }

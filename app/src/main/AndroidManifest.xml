@@ -13,9 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer">
         <activity
-            android:name=".Activities.SongActivity"
-            android:parentActivityName=".Activities.HomeActivity"
+            android:name=".Activities.BaseActivity"
             android:exported="false" />
+
+        <service
+            android:name=".Services.MyServices"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".Activities.SongActivity"
+            android:exported="false"
+            android:parentActivityName=".Activities.HomeActivity" />
         <activity
             android:name=".Activities.AllTracksActivity"
             android:exported="false"
