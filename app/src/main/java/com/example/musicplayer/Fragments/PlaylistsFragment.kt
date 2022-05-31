@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentManager
 import com.example.musicplayer.Activities.AllTracksActivity
 import com.example.musicplayer.Activities.HomeActivity
 import com.example.musicplayer.Constants.SONGS

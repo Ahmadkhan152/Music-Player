@@ -50,11 +50,11 @@ class RecyclerviewAdapter(
             intent.putExtra(POSITION,position)
             if (position!=obj.size)
                 intent.putExtra(NEXT_SONG,obj[position+1].dataList)
-            //callFunction.invoke(position)
             context.startActivity(intent)
         }
     }
-    override fun getItemCount(): Int {
+    override fun getItemCount(): Int
+    {
         return obj.size
     }
 }

@@ -12,5 +12,4 @@
         android:background="#453C3C"
         android:id="@+id/recyclerview"
         ></androidx.recyclerview.widget.RecyclerView>
-
 </FrameLayout>

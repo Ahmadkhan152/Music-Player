@@ -34,10 +34,4 @@
             app:layout_constraintLeft_toLeftOf="@+id/tvAllTracks"></TextView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:name="com.example.musicplayer.Fragments.FragmentLayout"
-        android:id="@+id/fragmentbackground" />
 </FrameLayout>

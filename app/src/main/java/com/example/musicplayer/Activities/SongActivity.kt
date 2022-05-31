@@ -1,17 +1,15 @@
 package com.example.musicplayer.Activities
 
-import android.app.Activity
-import android.app.ActivityManager
 import android.content.*
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.SyncStateContract
 import android.view.WindowInsets
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.net.toUri
 import com.example.musicplayer.Constants.*
 import com.example.musicplayer.Models.SongModel
@@ -45,6 +43,7 @@ class SongActivity : BaseActivity() {
     var nextSong:String=""
     var position=0
     var mBounded = false
+    var check=true
     lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +70,8 @@ class SongActivity : BaseActivity() {
         mediaPlayer= MediaPlayer()
         ivRepeat=findViewById(R.id.ivRepeatSong)
         tvNextSong=findViewById(R.id.tvNextSong)
+//        if (!this::serviceObject.isInitialized)
+//            serviceObject.stopMedia()
         mediaPlayer= MediaPlayer.create(this@SongActivity, songModel[position].dataList.toUri())
         val simpleDateFormat = SimpleDateFormat(PATTERN)
         val time=simpleDateFormat.format(songModel[position].timeList.toInt())
@@ -81,6 +82,7 @@ class SongActivity : BaseActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == MY_BROADCAST)
                 {
+                    val checkEventFromMainActivity=intent?.getBooleanExtra(CHECK_EVENT_FROM_MAIN_ACTIVITY,false)
                     val progress=intent?.getIntExtra(PROGRESS_SEEKBAR,-1)
                     var duration=intent?.getIntExtra(DURATION,-1)
                     if (progress!=-1 && progress!=null)
@@ -90,22 +92,31 @@ class SongActivity : BaseActivity() {
                         val time=simpleDateFormat.format(progress)
                         tvStartPoint.text=time.toString()
                     }
+                    else if (checkEventFromMainActivity)
+                    {
+                        val result=intent?.getIntExtra(CHECK_SONG_STATE,2)
+                        if (result == PLAY)
+                            serviceObject.pauseSong()
+                        else if (result == PAUSE)
+                            serviceObject.playSong()
+                    }
                 }
             }
         }
-
-
         val receiver=MyBroadCast()
         val intentFilter=IntentFilter()
         intentFilter.addAction(MY_BROADCAST)
         registerReceiver(receiver,intentFilter)
         val mIntent = Intent(this, MyServices::class.java)
         bindService(mIntent, mConnection, BIND_AUTO_CREATE)
-        startService(intent)
-
+        //startService(mIntent)
         tvEndPoint.text=time
         tvSongName.text=songModel[position].audioList
         tvAlbumName.text=songModel[position].artistName
+        val intent=Intent()
+        intent.putExtra(CHECK_SONG_STATE, PLAY)
+        intent.action= BROADCAST_SONG
+        sendBroadcast(intent)
         if (position!=songModel.size)
             tvNextSong.text="Next: ${songModel[position+1].audioList}"
         else
@@ -192,10 +203,18 @@ class SongActivity : BaseActivity() {
             {
                 serviceObject.pauseSong()
                 ivPlay.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+                val intent=Intent()
+                intent.putExtra(CHECK_SONG_STATE, PAUSE)
+                intent.action= BROADCAST_SONG
+                sendBroadcast(intent)
             }
             else{
                 serviceObject.playSong()
                 ivPlay.setImageResource(R.drawable.ic_baseline_pause_24)
+                val intent=Intent()
+                intent.putExtra(CHECK_SONG_STATE,PLAY)
+                intent.action= BROADCAST_SONG
+                sendBroadcast(intent)
             }
         }
         ivRepeat.setOnClickListener {
@@ -227,6 +246,7 @@ class SongActivity : BaseActivity() {
                 //seekbar.progress=p0!!.progress
             }
         })
+
     }
     private val mConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName) {
@@ -234,10 +254,14 @@ class SongActivity : BaseActivity() {
         }
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val intent=Intent(this@SongActivity,MyServices::class.java)
+            stopService(intent)
             mBounded = true
             val mLocalBinder = service as LocalBinder
             serviceObject = mLocalBinder.serverInstance()
             serviceObject.startMusic(songModel[position].dataList)
+            serviceObject.sendEventToMainActivity(songModel[position].audioList)
+            serviceObject.sendEventToAllTracksActivity(songModel[position].audioList)
         }
     }
     override fun onStart() {

@@ -8,9 +8,7 @@ import android.os.CountDownTimer
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.net.toUri
-import com.example.musicplayer.Constants.DURATION
-import com.example.musicplayer.Constants.MY_BROADCAST
-import com.example.musicplayer.Constants.PROGRESS_SEEKBAR
+import com.example.musicplayer.Constants.*
 
 
 class MyServices : Service() {
@@ -33,8 +31,7 @@ class MyServices : Service() {
         }
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     fun checkSong():Boolean{
@@ -44,6 +41,7 @@ class MyServices : Service() {
     }
     fun playSong()
     {
+
         if (mediaPlayer.currentPosition != 0)
         {
             duration=mediaPlayer.duration-mediaPlayer.currentPosition
@@ -106,5 +104,29 @@ class MyServices : Service() {
     }
     fun setPositionSong(position:Int){
         mediaPlayer.seekTo(position)
+    }
+    fun sendEventToMainActivity(songName:String)
+    {
+        var intent=Intent()
+        intent.action = MY_BROADCAST_MainActivity
+        intent.putExtra(SONG_NAME,songName)
+        sendBroadcast(intent)
+    }
+    fun sendEventToAllTracksActivity(songName:String)
+    {
+        var intent=Intent()
+        intent.action = MY_BROADCAST_AllTracks
+        intent.putExtra(SONG_NAME,songName)
+        sendBroadcast(intent)
+    }
+    fun checkForMediaPlayer():Boolean
+    {
+            return true
+        return false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopSelf()
     }
 }

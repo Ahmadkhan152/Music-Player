@@ -1,7 +1,10 @@
 package com.example.musicplayer.Activities
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Color
@@ -11,6 +14,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -18,10 +22,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.musicplayer.Adapter.PageAdapter
+import com.example.musicplayer.Constants.*
+import com.example.musicplayer.Fragments.FragmentLayout
 import com.example.musicplayer.Models.SongModel
 import com.example.musicplayer.R
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.text.SimpleDateFormat
 
 class HomeActivity : BaseActivity() {
     var permissions=arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.MODIFY_AUDIO_SETTINGS)
@@ -37,6 +44,7 @@ val mediaStore = arrayOf<String>(MediaStore.Audio.Media._ID,MediaStore.Audio.Med
     lateinit var tvSongName:TextView
     lateinit var audioList:ArrayList<String>
     lateinit var timeList:ArrayList<String>
+    lateinit var frameLayout: FrameLayout
 
 //End of declaration
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +59,14 @@ val mediaStore = arrayOf<String>(MediaStore.Audio.Media._ID,MediaStore.Audio.Med
         //Initialization of all attributes
         audioList=ArrayList()
         timeList= ArrayList()
-        constraintlayout=findViewById(R.id.contraintlayoutbottom)
-        tvSongName=findViewById(R.id.tvSongName)
+        frameLayout=findViewById(R.id.framelayout)
+        //tvSongName=findViewById(R.id.tvSongName)
         viewpager = findViewById<ViewPager2>(R.id.viewpager)
         tablayout=findViewById<TabLayout>(R.id.tablayout)
+        val fragmentManager=supportFragmentManager
+        val fragmenTransaction=fragmentManager.beginTransaction()
+        val fragmentLayout= FragmentLayout()
+        fragmenTransaction.add(R.id.framelayout,fragmentLayout).commit()
     //Finish Initialization of all attributes
         viewpager.adapter= PageAdapter(supportFragmentManager,lifecycle)
         tablayout.setSelectedTabIndicatorColor(Color.parseColor("#FD8427"));
@@ -81,6 +93,22 @@ val mediaStore = arrayOf<String>(MediaStore.Audio.Media._ID,MediaStore.Audio.Med
             }
 
         }.attach()
+    class MyBroadCast: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == MY_BROADCAST_MainActivity)
+            {
+                val songName=intent?.getStringExtra(SONG_NAME)
+                fragmentLayout.setText(songName!!)
+                frameLayout.visibility=View.VISIBLE
+            }
+        }
+    }
+
+
+    val receiver=MyBroadCast()
+    val intentFilter= IntentFilter()
+    intentFilter.addAction(MY_BROADCAST_MainActivity)
+    registerReceiver(receiver,intentFilter)
 
     }
 
